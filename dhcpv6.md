@@ -47,6 +47,18 @@ The 'Option Type' window will open.
 Name the option, such as 'CAPWAP'
 For Data Type select IPv6 Address from the drop-down menu.
 Tick the Array box.
-Enter Code 52
+Enter Code 52 then OK
 
 capwap-pic
+
+Activate this new Option under Scope Options, for DHCPv6 Stateful or Server Options for Stateless.
+
+## Ubuntu Linux
+
+Install the ISC DHCP server:
+
+```
+sudo apt update
+sudo apt-get install isc-dhcp-server
+```
+ 
