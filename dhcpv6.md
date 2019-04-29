@@ -61,4 +61,16 @@ Install the ISC DHCP server:
 sudo apt update
 sudo apt-get install isc-dhcp-server
 ```
- 
+
+
+Edit the DHCP server configuration file in your preferred editor. It is good practice to make a copy of the original first.
+
+sudo cp /etc/dhcp/dhcpd6.conf /etc/dhcp/dhcpd6.conf.old
+sudo nano /etc/dhcp/dhcpd6.conf
+
+
+option dhcp6.name-servers 2001:db8:a:50::10;
+option dhcp6.domain-search "actium.home";
+subnet6 2001:db8:a:50::/64 {
+        range6 2001:db8:a:50::200 2001:db8:a:50::299;
+}
