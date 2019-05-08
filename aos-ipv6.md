@@ -42,17 +42,29 @@ Here is a summary of the four address allocation methods:
 The multiple controller discovery methods open to Aruba Access Points, combined with the varying IPv6 address allocation and configuration methods creates numerous permeatations for network design and those that have been lab-tested are detailed here.
 Please note that the designs require a DHCP server, whether DHCPv6 or DHCPv4, see Option xxxxx SLAAC in combination with RFC8106 RDNSS & DNSSL alone is currently not supported.
 
-1. Stateful DHCPv6 with Option xxxx RDNSS.
-Setup:
-Deploy a DHCPv6 server.
-For Windows 2016/2019 the DHCPv6 configuration:
-DHCP > 
+### 1. Stateful DHCPv6 with Option 23 RDNSS, Option 24 DNS Search List and Option 52 CAPWAP
 
-Sample configuration for ISC DHCPv6 Linux-based server:
+This design relies upon the DHCPv6 server to provides all the information to the AP that it asks for in its DHCPv6 SOLICIT message to allow it to communicate with the controller.
 
-Please note that when an Aruba AP boots it will begin transmitting DHCPv6 SOLICITS and does not need to receive a Router Advertisement with the M flag ON.
-However, the gateway should not suppress RAs because the AP, and other local clients require the local prefix to determine that they are ON-LINK.
-If the DHCPv6 server is on a different subnet to the APs, remember to configure the 'ipv6 helper-address' command on the local gateway.
+#### Summary
+
+1. AP boots and transmits a DHCP SOLICIT. 
+2. DHCPv6 SOLICIT will received by a DHCPv6 Server on the same subnet, or forwarded by the local gateway to a remote DHCPv6 Server.
+3. DHCPv6 Server responds to AP with a non-temporary /128 address and Options 23, 24 and 52.
+4. Although the AP now knows the controller address via Option 52, it will send a DNS query to 'aruba-master.<your-domain>'
+5. AP and controller exchange messages to negotiate IPSEC tunnel through which they then communicate.
+
+Please note that when an Aruba AP boots it will begin transmitting DHCPv6 SOLICITS and does not need to receive a Router Advertisement with the M flag on.
+However, the gateway should not suppress RAs because the AP, and other local clients require the local prefix to determine that they are on-link.
+
+#### Build Check-list
+
+1. Deploy a DHCPv6 server with Scope options or Server Options 23, 24 and 52. Please note that you will need to create Option 52 on the server first before it can be selected as a Server or Scope Option.
+2. If the DHCPv6 server is on a different subnet to the APs, configure the 'ipv6 helper-address' command on the local gateway.
+3. Deploy a DNS server with a AAAA record for the controller. This is not strictly necessary with this design but it is good practise to have up-to-date DNS records for an IPv6 network where possible.
+
+
+
 
 
 
