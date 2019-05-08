@@ -62,15 +62,37 @@ sudo apt update
 sudo apt-get install isc-dhcp-server
 ```
 
+### DHCPv6 Configuration
 
 Edit the DHCP server configuration file in your preferred editor. It is good practice to make a copy of the original first.
 
 sudo cp /etc/dhcp/dhcpd6.conf /etc/dhcp/dhcpd6.conf.old
 sudo nano /etc/dhcp/dhcpd6.conf
 
+The ISC DHCP server uses as a single configuration file. To enable DHCPv6 Stateful or Stateless edit this file as appropriate:
 
+```
+# DNS Server addresses
 option dhcp6.name-servers 2001:db8:a:50::10;
+# DNS Search ListServer
 option dhcp6.domain-search "actium.home";
+# IPv6 subnet and the range within that subnet to offer addresses from
 subnet6 2001:db8:a:50::/64 {
         range6 2001:db8:a:50::200 2001:db8:a:50::299;
 }
+```
+
+#### Configure Option 52 - CAPWAP
+
+The DHCPv6 CAPWAP option is configured in the dhcp6.conf file.
+First create the option then apply it to a subnet:
+
+```
+# create option 52 capwap-ac-v6
+option dhcp6.capwap-ac-v6 code 52 = array of ip6-address;
+# apply to a subnet
+subnet6 2001:db8:a:50::/64 {
+	range6 2001:db8:a:50::100 2001:db8:a:50::115;
+    option dhcp6.capwap-ac-v6 2001:db8:a:50::30;
+}
+```
