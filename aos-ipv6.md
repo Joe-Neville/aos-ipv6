@@ -188,54 +188,64 @@ See design 3.
 
 #### DHCP Server Installation
 
-Start > Server Manager > Manage > Add Roles and Features
-Proceed to the Server Roles screen and tick 'DHCP Server' > Add Features
-Proceed to Confirmation then hit 'Install'
-The DHCP Server Feature will then install, you can close that windows down and the process will run in the background.
-Once complete there will be a warning in Server Manager for 'Post-deployment Configuration'. Hit the link 'Complete DHCP configuration'. You can proceed through the configuration with the default settings.
+1. `Start > Server Manager > Manage > Add Roles and Features`
+
+2. Proceed to the Server Roles screen and tick `'DHCP Server' > Add Features`
+
+3. Proceed to Confirmation then hit 'Install'
+
+4. The DHCP Server Feature will then install. You can close that window down and the process will run in the background.
+
+5. Once complete there will be a warning in Server Manager for 'Post-deployment Configuration'. 
+
+6. Hit the link 'Complete DHCP configuration'. You can continue through the configuration with the default settings.
 
 #### DHCPv6 Configuration
 
-Start > Windows Administrative Tools > DHCP
-Expand your Server to reveal 'IPv4' and 'IPv6'
+1. `Start > Windows Administrative Tools > DHCP`
+
+2. Expand your Server to reveal 'IPv4' and 'IPv6'
 
 
 ##### DHCPv6 Stateless 
 
-Only DHCPv6 Options are returned to the client, right-click 'Server Options' > Configure Options
+Only DHCPv6 Options are returned to the client.
 
-dhcpv6-stateless-server-options pic
+1. Right-click `'Server Options' > Configure Options`
 
-Configure the required options such as Option 23 RDNSS, Option 24 DNSSL. If you wish to communicate the controller address to the AP using DHCPv6 Option 52 it can be enabled here. Ensure you have completed the steps to create this Option first. See below.
+![stateless](/pictures/dhcpv6-stateless-server-options.png)
 
-dhcpv6-stateless pic
+2. Configure the required options such as Option 23 RDNSS, Option 24 DNSSL.  
+   If you wish to communicate the controller address to the AP using DHCPv6 Option 52 it can be enabled here. Ensure you have completed the steps to create this Option first. See below.
+
+![dhcpv6-option](pictures/dhcpv6-options.png)
 
 ##### DHCPv6 Stateful
 
-Right-click IPv6 > New Scope
-Complete the 'New Scope Wizard' to configure the Scope name and prefix, any excluded addresses and the lifetime.
-Hit Finish to activate the Scope.
+1. Right-click `IPv6 > New Scope`
+2. Complete the 'New Scope Wizard' to configure the Scope name and prefix, any excluded addresses and the lifetime.
+3. Hit Finish to activate the Scope.
+4. To add DHCPv6 Options, expand the Scope and right-click `'Scope Options' > Configure Options`
 
-To add DHCPv6 Options, expand the Scope and right-click 'Scope Options' > Configure Options
-
-dhcpv6-stateful-options pic
+![stateful-options](pictures/dhcpv6-stateful-options.png)
 
 Configure the desired options, see DHCPv6 Stateless above for details.
 
-##### Configure Option 52 - CAPWAP
+##### Configure Option 52 - CAPWAP-AC-IPV6
 
-Right-click 'IPv6' under your server in the DHCP window.
+The CAPWAP-AC-IPV6 option is not included in the default list of DHCPv6 Option on Windows Server and must be manually created before it can be applied.
 
-Select 'Set Predefined Options' > Add
-The 'Option Type' window will open.
-Name the option, such as 'CAPWAP'
-For Data Type select IPv6 Address from the drop-down menu.
-Tick the Array box.
-Enter Code 52 then OK
+1. Right-click 'IPv6' under your server in the DHCP window.
+2. Select `'Set Predefined Options' > Add`
+3. The 'Option Type' window will open.
+4. Name the option, such as 'CAPWAP-AC-IPV6'
+5. For Data Type select 'IPv6 Address' from the drop-down menu.
+6. Tick the 'Array' box.
+7. Enter Code 52 then OK
 
-capwap-pic
+![capwap-pic2](pictures/capwap-edit.png)
 
-Activate this new Option under Scope Options, for DHCPv6 Stateful or Server Options for Stateless.
+8. Activate this new Option under Scope Options, for DHCPv6 Stateful or Server Options for Stateless.
 
 ### Ubuntu Linux
 
@@ -248,12 +258,12 @@ sudo apt-get install isc-dhcp-server
 
 #### DHCPv6 Configuration
 
-Edit the DHCP server configuration file in your preferred editor. It is good practice to make a copy of the original first.
-
+1. Edit the DHCP server configuration file in your preferred editor. It is good practice to make a copy of the original first.
+```
 sudo cp /etc/dhcp/dhcpd6.conf /etc/dhcp/dhcpd6.conf.old
 sudo nano /etc/dhcp/dhcpd6.conf
-
-The ISC DHCP server uses as a single configuration file. To enable DHCPv6 Stateful or Stateless edit this file as appropriate:
+```
+2. The ISC DHCP server uses as a single configuration file. To enable DHCPv6 Stateful or Stateless edit this file as appropriate:
 
 ```
 # DNS Server addresses
