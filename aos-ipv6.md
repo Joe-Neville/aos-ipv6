@@ -19,26 +19,28 @@ However, when using IPv6, address allocation functionality is incorporated into 
 
 1. Static - user configured IPv6 prefix. Note that multiple IPv6 prefixes can be configured per interface.
 
-2. Stateless Address AutoConfiguration (SLAAC) - a client can create its own globally routable address without the need to deploy a DHCPv6 server.
-The local IPv6 gateway transmits Router Advertisement packets that contain one or more /64 prefixes with the RA flag 'Autonomous' flag, or the A flag, on. This tells the client to create its own address using the /64 from the RA as the first 64-bits, or Network ID, of the address and generating the latter 64-bits, or the interface identifier, itself. This functionality is active by default on all major operating systems including AOS8.
+2. Stateless Address AutoConfiguration (SLAAC) - a client can create its own globally routable address without the need to deploy a DHCPv6 server.  
+The local IPv6 gateway transmits Router Advertisement packets that contain one or more /64 prefixes with the RA flag 'Autonomous' flag, or the A flag, on. This tells the client to create its own address using the /64 from the RA as the first 64-bits, or Network ID, of the address and generating the latter 64-bits, or the interface identifier, itself. This functionality is active by default on all major operating systems including AOS8.  
 Moreover, in modern networks, clients often require more than just an IP address. Information such as DNS servers are vital to basic client operation. This data can be provided to a client using DHCPv4/DHCPv6 Options, but in a SLAAC environment there is no DHCP server. To address this, the IETF produced RFC6106 'IPv6 Router Advertisement Options for DNS Configuration' which detailed using Router Advertisements to communicate the Recursive DNS Server (RNDSS) and DNS
-Search-List (DNSSL) to SLAAC clients. Please note that RFC8106 obsoletes RFC6106 but, at present, vendor datasheets and OS specifications still quote RFC6106 to indicate this general functionality.
+Search-List (DNSSL) to SLAAC clients.  
+Please note that RFC8106 obsoletes RFC6106 but, at present, vendor datasheets and OS specifications still quote RFC6106 to indicate this general functionality.
 
 3. Stateful DHCPv6 - Upon boot, depending on the OS implementation, the client will either attempt to contact a DHCPv6 server with a DHCPv6 Solicit packet or the local gateway will tell the client to use DHCPv6 via the Router Advertisement packet. The RA will have the Managed flag, or the M flag, set to on. Upon receipt the client will transmit DHCPv6 Solicit messages.
 If the DHCPv6 server is on a different subnet, the local gateway must be configured with a DHCPv6 helper address pointing to the DHCPv6 server.
 To summarize the basic operation of a successful DHCPv6 exchange, the server will issue an address to the requesting client which the client will use as its globally routable address.
 Please note that the DHCPv6 server can also issue DHCPv6 Options in addition to the address. The relevant options in this environment as as follows:
 
-* 23 - Recursive DNS Server
-* 24 - DNS Search List
-* 52 - CAPWAP
-Also note that DHCPv6 and SLAAC are not mutually exclusive on a subnet. The local gateway can issue a Router Advertisment with the M flag set and one or more prefixes with the A flag on. By default, clients will auto-generate addresses based on the received A-flag enabled prefixes and still attempt to Solicit an address from a DHCPv6 server.
+    - Option 23 - Recursive DNS Server
+    - Option 24 - DNS Search List
+    - Option 52 - CAPWAP
 
-4. Stateless DHCPv6 - This method combines SLAAC for address configuration and DHCPv6 for the additional information found in DHCPv6 options.
+
+    Also note that DHCPv6 and SLAAC are not mutually exclusive on a subnet. The local gateway can issue a Router Advertisment with the M flag set and one or more prefixes with the A flag on. By default, clients will auto-generate addresses based on the received A-flag enabled prefixes and still attempt to Solicit an address from a DHCPv6 server.
+
+1. Stateless DHCPv6 - This method combines SLAAC for address configuration and DHCPv6 for the additional information found in DHCPv6 options.
 The local gateway will issue one or more prefixes with the A flag on for the client to use to create their addresses. The gateway will also set the RA Other flag, or O flag, on. This tells the client to attempt to contact a DHCPv6 server for additional, non-address information.
 The client transmits a DHCPv6 Information-Request and the DHCPv6 server returns the configured Options, without an IPv6 address.
 
-Here is a summary of the four address allocation methods:
 
 ## Aruba Network Design Options
 
@@ -54,7 +56,8 @@ This design relies upon the DHCPv6 server to provide the information required to
 2. DHCPv6 Solicit will received by a DHCPv6 Server on the same subnet, or forwarded by the local gateway to a remote DHCPv6 Server.
 3. DHCPv6 Server responds to AP with a non-temporary /128 address and Options 23 RDNSS and Option 24 DNSSL.
 4. The AP sends a DNS query to 'aruba-master.<your-domain>'.
-5. The DNS server replies with the address, or addresses, for 'aruba-master.<your-domain>'. N.B. If the DNS server holds multiple AAAA records for 'aruba-master', these are included in the reply and the AP will query each in turn until communication with a controller is established. 
+5. The DNS server replies with the address, or addresses, for 'aruba-master.<your-domain>'.  
+N.B. If the DNS server holds multiple AAAA records for 'aruba-master', these are included in the reply and the AP will query each in turn until communication with a controller is established. 
 6. AP and controller exchange messages to negotiate IPSEC tunnel through which they then communicate.
 
 Please note that when an Aruba AP boots it will begin transmitting DHCPv6 SolicitS and does not need to receive a Router Advertisement with the M flag on.
@@ -137,7 +140,8 @@ With this design the AP uses SLAAC for address configuration, DHCPv6 options to 
 
 #### Gateway Config Notes
 
-1. The local gateway needs to be configured to send the AP's on-link /64 prefix with the Autonmous flag on. By default ArubaOS-Switch devices will send the /64 prefix in an RA with the A flag on. Thus the only configuration required to complete this step is to configure the gateway's interface with an IPv6 address in the appropriate /64 prefix.
+1. The local gateway needs to be configured to send the AP's on-link /64 prefix with the Autonmous flag on. By default ArubaOS-Switch devices will send the /64 prefix in an RA with the A flag on.  
+Thus the only configuration required to complete this step is to configure the gateway's interface with an IPv6 address in the appropriate /64 prefix.
 2. The gateway must also set the Other flag in its RAs to on. This is configured with `ipv6 nd ra other-config-flag'.
 3. Ensure the `ipv6 helper-address` is configured for remote DHCPv6 servers.
 
@@ -213,7 +217,7 @@ Only DHCPv6 Options are returned to the client.
 
 1. Right-click `'Server Options' > Configure Options`
 
-![stateless](/pictures/dhcpv6-stateless-server-options.png)
+![stateless](/pictures/dhcpv6-stateless-server-options2.png)
 
 2. Configure the required options such as Option 23 RDNSS, Option 24 DNSSL.  
    If you wish to communicate the controller address to the AP using DHCPv6 Option 52 it can be enabled here. Ensure you have completed the steps to create this Option first. See below.
