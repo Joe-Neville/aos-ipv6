@@ -48,10 +48,11 @@ This design relies upon the DHCPv6 server to provides all the information to the
 
 #### Summary
 
-1. AP boots and transmits a DHCP SOLICIT. 
+1. AP boots and transmits a DHCPv6 SOLICIT. 
 2. DHCPv6 SOLICIT will received by a DHCPv6 Server on the same subnet, or forwarded by the local gateway to a remote DHCPv6 Server.
 3. DHCPv6 Server responds to AP with a non-temporary /128 address and Options 23, 24 and 52.
 4. Although the AP now knows the controller address via Option 52, it will send a DNS query to 'aruba-master.<your-domain>'
+The address received via Option 52 takes precedence over any address received in the 
 5. AP and controller exchange messages to negotiate IPSEC tunnel through which they then communicate.
 
 Please note that when an Aruba AP boots it will begin transmitting DHCPv6 SOLICITS and does not need to receive a Router Advertisement with the M flag on.
@@ -60,14 +61,43 @@ However, the gateway should not suppress RAs because the AP, and other local cli
 #### Build Check-list
 
 1. Deploy a DHCPv6 server with Scope options or Server Options 23, 24 and 52. Please note that you will need to create Option 52 on the server first before it can be selected as a Server or Scope Option.
-2. If the DHCPv6 server is on a different subnet to the APs, configure the 'ipv6 helper-address' command on the local gateway.
-3. Deploy a DNS server with a AAAA record for the controller. This is not strictly necessary with this design but it is good practise to have up-to-date DNS records for an IPv6 network where possible.
+2. Configure the local gatway. See the notes below.
+3. Deploy a DNS server with a AAAA record for the controller using the name 'aruba-master'. This is not strictly necessary with this design but it is good practise to have up-to-date DNS records for an IPv6 network where possible.
 
+#### Gateway Config Notes
 
+1. The AP will transmit a DHCPv6 SOLICIT regardless of whether it has received a Router Advertisement. However, to ensure deterministic behaviour for other clients on the VLAN, set the M flag to on with `ipv6 nd ra managed-config-flag`.
+2. The gateway will include the IPv6 prefix in the RA by default. This does not need to be explicitly configured.
+3. However, by default, the prefix in the RA has the Autonomous flag set to on. Thus clients will use this prefix to generate their own IPv6 addresses using SLAAC. Disable this behaviour with `ipv6 nd ra prefix 2001:db8:a:50::/64 infinite no-autoconfig`.
+4. Include the `ipv6 helper-address` command for remote DHCPv6 servers
 
+```
+ipv6 unicast-routing
+vlan 50
+   ipv6 enable
+   ipv6 address fe80::1 link-local
+   ipv6 address 2001:db8:a:50::1/64
+   ipv6 nd ra managed-config-flag
+   ipv6 nd ra prefix 2001:db8:a:50::/64 infinite no-autoconfig
+   ipv6 helper-address unicast 2001:db8:a:50::1
+   exit
+dhcpv6-relay
+```
 
+### 2. Stateful DHCPv6 with Option 23 RDNSS, Option 24 DNS Search List
 
+This design is essentially Design 1 but without Option 52 CAPWAP configured.
 
+#### Summary
 
+See Design 1
 
+#### Build Check-list
 
+1. Deploy a DHCPv6 server with Option 23 and 24 only.
+2. With this design the DNS server and AAAA are not optional. The AP must successfully query the namae server for 'aruba-master.<your-domain>'
+3. Configure the gateway.
+
+#### Gateway Config Notes
+
+See Design 1
