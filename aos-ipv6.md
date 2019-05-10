@@ -21,7 +21,8 @@ However, when using IPv6, address allocation functionality is incorporated into 
 
 2. Stateless Address AutoConfiguration (SLAAC) - a client can create its own globally routable address without the need to deploy a DHCPv6 server.  
 The local IPv6 gateway transmits Router Advertisement packets that contain one or more /64 prefixes with the RA flag 'Autonomous' flag, or the A flag, on. This tells the client to create its own address using the /64 from the RA as the first 64-bits, or Network ID, of the address and generating the latter 64-bits, or the interface identifier, itself. This functionality is active by default on all major operating systems including AOS8.  
-Moreover, in modern networks, clients often require more than just an IP address. Information such as DNS servers are vital to basic client operation. This data can be provided to a client using DHCPv4/DHCPv6 Options, but in a SLAAC environment there is no DHCP server. To address this, the IETF produced RFC6106 'IPv6 Router Advertisement Options for DNS Configuration' which detailed using Router Advertisements to communicate the Recursive DNS Server (RNDSS) and DNS
+Moreover, in modern networks, clients often require more than just an IP address. Information such as DNS servers are vital to basic client operation. This data can be provided to a client using DHCPv4/DHCPv6 Options, but in a SLAAC environment there is no DHCP server.  
+To address this, the IETF produced RFC6106 'IPv6 Router Advertisement Options for DNS Configuration' which detailed using Router Advertisements to communicate the Recursive DNS Server (RNDSS) and DNS
 Search-List (DNSSL) to SLAAC clients.  
 Please note that RFC8106 obsoletes RFC6106 but, at present, vendor datasheets and OS specifications still quote RFC6106 to indicate this general functionality.
 
@@ -44,9 +45,20 @@ The client transmits a DHCPv6 Information-Request and the DHCPv6 server returns 
 
 ## Aruba Network Design Options
 
-The multiple controller discovery methods open to Aruba access points, combined with the varying IPv6 address allocation and configuration methods creates numerous permeatations for network design and those that have been lab-tested are detailed here.
+The multiple controller discovery methods open to Aruba access points, combined with the varying IPv6 address allocation and configuration methods creates numerous permeatations for network design.  
+In this section details are provided for four different design options.  
 
-### 1. Stateful DHCPv6 with DHCPv6 Option 23 RDNSS and Option 24 DNS Search List
+### Basic Network Design
+1. Single VLAN design
+2. The AP boots in an IPv6 only environment.
+3. An external gateway is used, in this case an ArubaOS-Switch 2930.
+4. An external DHCPv6 server is deployed. Windows Server and Ubuntu Linux ISC DHCP server were tested. See Appendix A for deployment details.
+
+#### Example Network Diagram
+
+![network-diagram](/pictures/network-diagram-1.png)
+
+### Design 1 - Stateful DHCPv6 with DHCPv6 Option 23 RDNSS and Option 24 DNS Search List
 
 This design relies upon the DHCPv6 server to provide the information required to allow the AP to discover the local controller via a DNS query.
 
@@ -89,7 +101,7 @@ vlan 50
 dhcpv6-relay
 ```
 
-### 2. Stateful DHCPv6 with DHCPv6 Option 52 CAPWAP-AC-IPV6
+### Design 2 - Stateful DHCPv6 with DHCPv6 Option 52 CAPWAP-AC-IPV6
 
 Rather than rely on DNS records, the DHCPv6 server can provide the controller address to the AP directly as a DHCPv6 Option.
 
@@ -117,7 +129,7 @@ Designs 1 and 2 can be combined, whereby the DHCPv6 returns RDNSS, DNSSL and CAP
 The AP will query for 'aruba-master.<your-domain>' regardless of whether it holds a valid address via Option 52 or not.
 In this case the AP will attempt to contact the controller using the address learnt via Option 52 first. If that fails, it uses the addresses returned in the DNS reply.
 
-### 3. Stateless DHCPv6 with DHCPv6 Option 23 RDNSS, Option 24 DNS Search List
+### Design 3 - Stateless DHCPv6 with DHCPv6 Option 23 RDNSS, Option 24 DNS Search List
 
 With this design the AP uses SLAAC for address configuration, DHCPv6 options to compose a DNS query and then uses that to resolve the controller address.
 
@@ -157,7 +169,7 @@ vlan 50
 dhcpv6-relay
 ```
 
-### 4. Stateless DHCPv6 with DHCPv6 Option 52 CAPWAP-AC-IPV6
+### Design 4 - Stateless DHCPv6 with DHCPv6 Option 52 CAPWAP-AC-IPV6
 
 This design has the DHCPv6 server return only the controller address in its Reply.
 
