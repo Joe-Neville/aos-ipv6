@@ -55,7 +55,7 @@ This section provides details of four different design options.
 
 #### Example Network Diagram
 
-![network-diagram](/pictures/network-diagram-1.png)
+![network-diagram](pictures/network-diagram-1.png)
 
 ### Design 1 - Stateful DHCPv6 with DHCPv6 Option 23 RDNSS and Option 24 DNS Search List
 
@@ -230,7 +230,7 @@ Only DHCPv6 Options are returned to the client.
 
 1. Right-click `'Server Options' > Configure Options`
 
-![stateless](/pictures/dhcpv6-stateless-server-options2.png)
+![stateless](pictures/dhcpv6-stateless-server-options2.png)
 
 2. Configure the required options such as Option 23 RDNSS, Option 24 DNSSL.  
    If you wish to communicate the controller address to the AP using DHCPv6 Option 52 it can be enabled here. Ensure you have completed the steps to create this Option first. See below.
