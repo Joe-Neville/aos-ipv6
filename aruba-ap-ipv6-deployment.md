@@ -1,4 +1,4 @@
-# AOS8 IPv6
+# Aruba AP IPv6 Deployment
 
 This document details the various methods available to allow an Aruba access point to discover a controller in an IPv6 only environment.
 
