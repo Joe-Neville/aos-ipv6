@@ -1,6 +1,6 @@
 # AOS8 IPv6
 
-This document details the various methods available to allow an Aruba access point to discover a controller in an IPv6 only environment.
+This document details the various methods available to allow an Aruba access point to discover a controller in an IPv6 only environment.  
 
 ## Aruba Access Point Boot Procedure
 
@@ -48,6 +48,7 @@ The multiple controller discovery methods open to Aruba access points, combined 
 This section provides details of four different design options.  
 
 ### Basic Network Design
+
 1. A single VLAN design is used but the design notes are equally applicable to a multi-VLAN environment.
 2. The AP boots in an IPv6 only network.
 3. An external gateway is used, in this case an ArubaOS-Switch 2930.
@@ -56,6 +57,16 @@ This section provides details of four different design options.
 #### Example Network Diagram
 
 ![network-diagram](pictures/network-diagram-1.png)
+
+#### Note regarding Access Point Type
+
+Aruba offers three types of Access Point:
+
+- Campus - controller-managed. The AP boots and attempts to discover a controller.
+- Instant - controller-less. AP boots without the controller discovery process. By default, a 'Setup' SSID is broadcast to allow further configuration.
+- Unified - Automatic provisioning in controller-managed or controller-less mode. When the AP first boots the controller discovery process runs. If a controller is discovered the AP will run in a controller-managed state using an AOS image, downloaded from the controller. If no controller is found, the AP will run in Instant mode.
+
+In addition, an Instant AP can be manually converted to a Campus AP. All testing for this document was performed on IAPs converted to Campus APs.
 
 ### Design 1 - Stateful DHCPv6 with DHCPv6 Option 23 RDNSS and Option 24 DNS Search List
 
