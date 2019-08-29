@@ -58,7 +58,7 @@ This section provides details of four different design options.
 
 ![network-diagram](pictures/network-diagram-1.png)
 
-#### Note regarding Access Point Type
+#### Note regarding Access Point Types
 
 Aruba offers three types of Access Point:
 
