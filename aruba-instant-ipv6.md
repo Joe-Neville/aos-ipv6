@@ -4,9 +4,10 @@ This document describes Aruba Instant IPv6 network designs.
 
 ## Aruba Instant Overview
 
-Aruba Instant is a controller-less, yet fully-featured, wireless architecture. As such it lacks the 'Controller discovery' concerns of ArubaOS installations.
-There are, however, a number of options when it comes to Instant network design stemming from the considerations inherent in IPv6 networks.
-By default an Aruba Instant Access Point, or IAP, is configured for IPv4 only. However once online, the AP can be configured for IPv4 & IPv6 dual-stack.
+Aruba Instant is a controller-less, yet fully-featured, wireless architecture. As such it lacks the 'Controller discovery' concerns of ArubaOS installations.  
+Nonetheless, there are a number of options when it comes to Instant network design stemming from the considerations inherent in IPv6 networks.  
+By default an Aruba Instant Access Point, or IAP, is configured for IPv4 only.  
+However once online, the AP can be configured for IPv4 & IPv6 dual-stack.
 
 ### Aruba Instant Boot Procedure
 
